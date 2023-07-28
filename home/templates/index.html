@@ -1,0 +1,68 @@
+{% include 'bs.html' %}
+<div class="container mt-2">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-primary">Translator</h5>
+            <div class="form-floating">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-6">
+                        <form method="POST" id="translationForm">{% csrf_token %}
+                            <textarea class="form-control" name="tok" id="input" rows="10"
+                                placeholder="Enter text to translate"></textarea>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-3 mt-sm-2">
+                        <select class="form-select" name="language" id="select">
+                            <option selected value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="gu">Gujarati</option>
+                            <option value="bn">Bengali</option>
+                            <option value="en">English</option>
+                            <!-- Add more language options here -->
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-3 mt-sm-2">
+                        <button type="button" id="translateBtn" class="btn btn-outline-primary w-100">Translate</button>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <textarea class="form-control fw-bold" placeholder="Translation will appear here"
+                            id="translatedText" rows="10" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById( "translateBtn" ).addEventListener( "click", function () {
+        // Translation logic here...
+    } );
+</script>
+
+<script>
+    $( document ).ready( function () {
+        $( "#translateBtn" ).click( function () {
+            let inputData = $( "#input" ).val();
+            let selectedLanguage = $( "#select" ).val();
+
+            $.ajax( {
+                url: "{% url 'home' %}",
+                method: "POST",
+                data: {
+                    data: inputData,
+                    language: selectedLanguage,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function ( response ) {
+                    // Assuming the server response contains the translated text
+                    $( "#translatedText" ).val( response.translated_text );
+                },
+                error: function ( xhr, textStatus, error ) {
+                    console.error( 'Error:', error );
+                },
+            } );
+        } );
+    } );
+</script>
